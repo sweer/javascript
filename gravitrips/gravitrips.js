@@ -107,40 +107,35 @@ function Game() {
 	};
 
 	this.horizontalWin = function(x, y) { 
-		var x1 = (x - 3) < 0 ? 0 : x - 3;
-		var x2 = (x + 3) >= WIDTH ? WIDTH - 1 : x + 3;
-		var count = 0;
-		for (var i = x1; i <= x2; i++) { 
-			if (field[i][y] === currentPlayer) { 
-				count++;
-			} else { 
-				count = 0;
-			}
-			if (count == 4) { 
-				return true;
-			}
-		}
-		return false;
+		return this.has4InRow(x, 3, 0, WIDTH-1, function(j) { 
+			return field[j][y] === currentPlayer;
+		});
 	}
 
 	this.verticalWin = function(x, y) { 
-		var y1 = (y - 3) < 0 ? 0 : y - 3;
-		var y2 = (y + 3) >= WIDTH ? WIDTH - 1 : y + 3;
+		return this.has4InRow(y, 3, 0, HEIGHT-1, function(j) { 
+			return field[x][j] === currentPlayer;
+		});
+	}
+
+	this.has4InRow = function(center, width, min, max, predicate) { 
+		var j1 = (center - width) < min ? min : center - width;
+		var j2 = (center + width) > max ? max : center + width;
 		var count = 0;
-		for (var i = y1; i <= y2; i++) { 
-			if (field[x][i] === currentPlayer) { 
-				count++;
+		for (var j = j1; j <= j2; j++) { 
+			if (predicate(j)) { 
+				count++; 
+			
+				if (count == 4) { 
+					return true;
+				}
+
 			} else { 
-				count = 0;
-			}
-			if (count == 4) { 
-				return true;
+				count = 0; 
 			}
 		}
 		return false;
 	}
-
-
 
 	this.isDraw = function() { 
 		for (var x=0; x<WIDTH; x++) { 
