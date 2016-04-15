@@ -12,7 +12,7 @@ function Game() {
 	const O = 'O';
 	const WON = 1;
 	const DRAW = 2; 
-	const RUNNING = 3; 
+	const RUNNING = 3;
 	var field = new Array(WIDTH);
 	var currentPlayer = X;
 	var gameState = RUNNING;
@@ -73,7 +73,7 @@ function Game() {
 
 		gameState = this.storeMove(move);
 		
-		if (result === NONE) {
+		if (gameState === RUNNING) {
 			currentPlayer = currentPlayer === X ? O : X;
 		};
 
@@ -97,22 +97,20 @@ function Game() {
 		}
 
 		if (this.horizontalWin(x, y) 
-			// || this.verticalWin(x, y) 
+			|| this.verticalWin(x, y) 
 			// || this.mainDiagonalWin(x, y) || this.secondDiagonalWin(x, y)
 			) { 
 			return WON;
 		}
 
-		return NONE;
+		return RUNNING;
 	};
 
 	this.horizontalWin = function(x, y) { 
 		var x1 = (x - 3) < 0 ? 0 : x - 3;
 		var x2 = (x + 3) >= WIDTH ? WIDTH - 1 : x + 3;
 		var count = 0;
-		console.log("field = " + field); 
 		for (var i = x1; i <= x2; i++) { 
-			console.log("i = " + i + ", field[i] = " + field[i]);
 			if (field[i][y] === currentPlayer) { 
 				count++;
 			} else { 
@@ -124,6 +122,25 @@ function Game() {
 		}
 		return false;
 	}
+
+	this.verticalWin = function(x, y) { 
+		var y1 = (y - 3) < 0 ? 0 : y - 3;
+		var y2 = (y + 3) >= WIDTH ? WIDTH - 1 : y + 3;
+		var count = 0;
+		for (var i = y1; i <= y2; i++) { 
+			if (field[x][i] === currentPlayer) { 
+				count++;
+			} else { 
+				count = 0;
+			}
+			if (count == 4) { 
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 
 	this.isDraw = function() { 
 		for (var x=0; x<WIDTH; x++) { 
@@ -157,9 +174,9 @@ View.prototype = {
 
 	setCell: function(x, y, value) { 
 		var data = this.EMPTY;
-		if (game.isX(value)) {
+		if (this.game.isX(value)) {
 			data = this.X; 
-		} else if (game.isO(value)) {
+		} else if (this.game.isO(value)) {
 			data = this.O; 
 		};
 
@@ -233,6 +250,8 @@ function onload() {
 	view.setController(controller);
 	controller.setGame(game);
 	view.initialize(); 
-}
+};
 
-module.exports = Game;
+if (typeof(module) != 'undefined') { 
+	module.exports = Game;
+};
