@@ -107,13 +107,13 @@ function Game() {
 	};
 
 	this.horizontalWin = function(x, y) { 
-		return this.has4InRow(x, 3, 0, WIDTH-1, function(j) { 
+		return this.has4InRow(x, 3, 0, WIDTH - 1, function(j) { 
 			return field[j][y] === currentPlayer;
 		});
 	}
 
 	this.verticalWin = function(x, y) { 
-		return this.has4InRow(y, 3, 0, HEIGHT-1, function(j) { 
+		return this.has4InRow(y, 3, 0, HEIGHT - 1, function(j) { 
 			return field[x][j] === currentPlayer;
 		});
 	}
