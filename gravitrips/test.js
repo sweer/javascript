@@ -115,6 +115,59 @@ describe('Game', function() {
 		expect(game.stateText()).to.equal("O move");
 	});
 
+	it('main diagonal 0,0 the last', function() { 
+		var game = new Game();
+		game.makeMove(1); game.makeMove(1); 
+		game.makeMove(2); game.makeMove(2);
+		game.makeMove(1); game.makeMove(2);
+		game.makeMove(3); game.makeMove(3);
+		game.makeMove(3); game.makeMove(3);
+		game.makeMove(5); game.makeMove(0);
+
+		expect(game.stateText()).to.equal("O won!");
+	});
+
+	it('reverse diagonal rightmost the last', function() { 
+		var game = new Game(); 
+		game.makeMove(5); game.makeMove(4);
+		game.makeMove(5); game.makeMove(4);
+		game.makeMove(4); game.makeMove(3);
+		game.makeMove(3); game.makeMove(3);
+		game.makeMove(3); game.makeMove(0);
+		game.makeMove(6);
+
+		expect(game.stateText()).to.equal("X won!");
+	});
+
+
+	it('reverse diagonal topmost the last', function() { 
+		var game = new Game();
+		game.setField([ ['.', '.', '.', '.', 'X', 'O'], 
+					    ['.', '.', '.', '.', 'O', 'X'], 
+						['.', 'X', 'X', 'O', 'X', 'X'], 
+						['.', 'O', 'X', 'X', 'O', 'X'], 
+						['.', 'O', 'O', 'O', 'X', 'O'], 
+						['.', 'O', 'X', 'O', 'X', 'O'], 
+						['.', '.', '.', '.', 'X', 'O'] ]);  
+		game.makeMove(4); game.makeMove(2);
+
+		expect(game.stateText()).to.equal("O won!");
+	});
+
+	it('out of bounds main diagonal regression', function() { 
+		var game = new Game();
+		game.setField([ ['.', '.', '.', '.', '.', '.'], 
+					    ['.', '.', '.', '.', 'O', 'X'], 
+						['.', '.', 'X', 'O', 'O', 'O'], 
+						['.', '.', 'O', 'X', 'X', 'X'], 
+						['.', '.', '.', '.', 'O', 'X'], 
+						['.', '.', '.', '.', '.', '.'], 
+						['.', '.', '.', '.', '.', '.'] ]);  
+		game.makeMove(0); 
+
+		expect(game.stateText()).to.equal("O move");
+	});
+
 
 
 

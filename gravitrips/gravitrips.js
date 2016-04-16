@@ -61,6 +61,8 @@ function Game() {
 
 	this.makeMove = function(move) {
 
+		move = move * 1;  // Sometimes UI reports move as a string 
+
 		if (gameState != RUNNING) { 
 			this.viewAnnounce("Game finished");
 			return;
@@ -98,13 +100,48 @@ function Game() {
 
 		if (this.horizontalWin(x, y) 
 			|| this.verticalWin(x, y) 
-			// || this.mainDiagonalWin(x, y) || this.secondDiagonalWin(x, y)
+			|| this.mainDiagonalWin(x, y) 
+			|| this.reverseDiagonalWin(x, y)
 			) { 
 			return WON;
 		}
 
 		return RUNNING;
 	};
+
+	this.reverseDiagonalWin = function(x, y) {
+		return this.has4Diagonal(3, x, 0, WIDTH-1,  +1, 
+			                        y, 0, HEIGHT-1, +1);
+	}; 
+
+	this.mainDiagonalWin = function(x, y) {
+		return this.has4Diagonal(3, x, 0, WIDTH-1,  +1, 
+			                        y, 0, HEIGHT-1, -1);
+	}; 
+
+	this.has4Diagonal = function(width, x, minx, maxx, signx, 
+		                                  y, miny, maxy, signy) { 
+		var count = 0;
+		for (var j = -width; j <= width; j++) { 
+			var xx = x + j * signx; 
+			var yy = y + j * signy; 
+
+			if (xx >= minx && xx <= maxx && yy >= miny && yy <= maxy) { 
+				if (field[xx][yy] === currentPlayer) { 
+					count++; 
+			
+					if (count == 4) { 
+						return true;
+					}
+
+				} else { 
+					count = 0; 
+				}
+			}
+		}
+		return false;
+	}
+
 
 	this.horizontalWin = function(x, y) { 
 		return this.has4InRow(x, 3, 0, WIDTH - 1, function(j) { 
@@ -135,7 +172,7 @@ function Game() {
 			}
 		}
 		return false;
-	}
+	};
 
 	this.isDraw = function() { 
 		for (var x=0; x<WIDTH; x++) { 
@@ -144,6 +181,22 @@ function Game() {
 			} 
 		}
 		return true;
+	};
+
+	this.getFieldDump = function() { 
+		var dump = '';
+		for (var y = 0; y < HEIGHT; y++) { 
+			for (var x = 0; x < WIDTH; x++) { 
+				dump += field[x][y] + ' '; 
+			}
+			dump += '\n';
+		}
+		return dump;
+	}
+
+	// Attention: use it for testing only as it doesn't update view! 
+	this.setField = function(afield) { 
+		field = afield;
 	}
 
 };
@@ -244,9 +297,10 @@ function onload() {
 	view.setGame(game);
 	view.setController(controller);
 	controller.setGame(game);
-	view.initialize(); 
+	view.initialize(); 	
 };
 
+// module.exports necessary for node-based unit tests
 if (typeof(module) != 'undefined') { 
 	module.exports = Game;
 };
